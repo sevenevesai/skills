@@ -1,0 +1,9 @@
+{
+  "name": "seveneves",
+  "description": "Agent Skills from Seveneves, one plugin per skill.",
+  "owner": {
+    "name": "Seveneves",
+    "url": "https://seveneves.ai"
+  },
+  "plugins": []
+}
