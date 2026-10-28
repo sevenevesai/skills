@@ -7,6 +7,16 @@
   },
   "plugins": [
     {
+      "name": "codex-image",
+      "description": "Generates or edits raster images (illustrations, concept art, UI mockups, sprites, icons, textures, photos, cutouts) with OpenAI Codex's built-in image generation, using the ChatGPT login Codex is signed into, and saves the PNG where the project needs it. Use when the user asks to create, draw, render, paint or edit an image, or a task needs a bitmap asset such as a hero image, a game sprite or a texture. Sends the prompt and any reference images to OpenAI. Not for 3D models, or for vector and diagram assets (logos, UI icons, charts) better built as SVG, CSS or code.",
+      "source": "./skills/codex-image",
+      "skills": [
+        "."
+      ],
+      "license": "MIT",
+      "repository": "https://github.com/sevenevesai/skills"
+    },
+    {
       "name": "make-skill",
       "description": "Creates, improves, or extracts an Agent Skill (a SKILL.md folder) from a workflow, a past session, or an existing skill, and proves it works by running test cases with and without the skill. Use whenever a SKILL.md is about to be written or changed, even for a quick fix, and when the user says \"make a skill for X\", \"turn this into a skill\", \"save this workflow so you always do it this way\", \"improve my X skill\", \"my skill never triggers\", or \"write evals for my skill\". Not for project conventions (a rules or instructions file), behaviour that must happen every time (a hook), or installing someone else's skill.",
       "source": "./skills/make-skill",
