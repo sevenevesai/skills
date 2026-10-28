@@ -4,11 +4,25 @@ Agent Skills by [Seveneves](https://seveneves.ai), for Claude Code and any other
 reads `SKILL.md`: Codex, GitHub Copilot, Cursor, Gemini CLI and more.
 
 Each skill is a folder of written know-how: when to use it, the steps, and any scripts or
-references it needs. No skills are published yet. This repo is where they will appear.
+references it needs. Each one is tested before release by running realistic requests with
+and without it: it has to fire on the requests it is for, stay quiet on near-misses, and do
+better than no skill at all.
+
+## Skills
+
+| Skill | What it does | Claude Code |
+|---|---|---|
+| [make-skill](skills/make-skill) | Creates, improves or extracts a skill, and proves it works with test cases run with and without it. | `/plugin install make-skill --marketplace sevenevesai/skills` |
 
 ## Install
 
-**Claude Code**
+**Claude Code** 2.1.275 or later, in one step:
+
+```
+/plugin install <skill> --marketplace sevenevesai/skills
+```
+
+On older versions, add the marketplace first:
 
 ```
 /plugin marketplace add sevenevesai/skills

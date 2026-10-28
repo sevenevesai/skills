@@ -5,5 +5,16 @@
     "name": "Seveneves",
     "url": "https://seveneves.ai"
   },
-  "plugins": []
+  "plugins": [
+    {
+      "name": "make-skill",
+      "description": "Creates, improves, or extracts an Agent Skill (a SKILL.md folder) from a workflow, a past session, or an existing skill, and proves it works by running test cases with and without the skill. Use whenever a SKILL.md is about to be written or changed, even for a quick fix, and when the user says \"make a skill for X\", \"turn this into a skill\", \"save this workflow so you always do it this way\", \"improve my X skill\", \"my skill never triggers\", or \"write evals for my skill\". Not for project conventions (a rules or instructions file), behaviour that must happen every time (a hook), or installing someone else's skill.",
+      "source": "./skills/make-skill",
+      "skills": [
+        "."
+      ],
+      "license": "MIT",
+      "repository": "https://github.com/sevenevesai/skills"
+    }
+  ]
 }
