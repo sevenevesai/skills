@@ -131,6 +131,11 @@ times with the plugin and three times without. It writes `evals/results/<time>/`
 - Shell tools need the OS sandbox: macOS, Linux with `bubblewrap` and `socat`, or WSL2 on
   Windows. Native Windows refuses runs that grant a shell, so test shell-heavy skills on one of
   the others.
+- Each run gets a temporary home folder and a fenced network, so a skill that drives a service
+  through the user's own login (a CLI signed in to their account, credentials in their home
+  folder) can't execute there on any system. Its cases can still show that it fires and picks
+  the right route. Prove execution with a smoke test: a script that runs the skill's scripts
+  for real on a copy of the skill and checks what they produce.
 - The first run in a new folder asks you to trust it. `--trust-plugin` answers yes, for CI.
 
 ## Running without it
@@ -147,7 +152,8 @@ A skill is proven when, over three runs per case:
 - the suite has at least two should-fire cases and one should-stay-quiet case;
 - each should-fire case fires the skill in at least two of its three runs;
 - every case scores at least 0.8;
-- and the average score with the skill beats the average without it.
+- the average score with the skill beats the average without it;
+- and, for a skill the runs can't execute, its smoke test passes.
 
 Record the date, the model, the scores and the fire rates with the skill. Run again whenever
 the skill or the cases change, and when a new model comes out.

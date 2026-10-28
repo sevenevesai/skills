@@ -32,7 +32,7 @@ Read each reference when its step comes up:
 
 | The material is | Write |
 |---|---|
-| A reusable multi-step workflow or body of know-how | A skill. Continue below. |
+| A reusable multi-step workflow or body of know-how | A skill. |
 | A convention for one project ("we use pnpm here") | A rule or project instructions file, scoped to that project. |
 | Something that must happen every time, without fail | A hook or a CI check. Skills are advice and can be skipped. |
 | Context every session in a project needs | The project's instructions file (CLAUDE.md, AGENTS.md). |
@@ -43,7 +43,7 @@ next project. One skill does one job. Split a skill that serves two unrelated re
 
 ## 2. Gather evidence before asking
 
-Look before you ask. Sources:
+Look before you ask:
 
 - **This session**, when the work happened here: the tools used and their order, exact commands
   and flags, input and output shapes, the user's corrections, and dead ends.
@@ -58,8 +58,8 @@ unchanged first. That copy is the baseline the new version has to beat.
 ## 3. Intake
 
 Fill the fields in `references/intake.md` and mark each one verified, claimed or missing.
-Then ask only about gaps whose answer would change what the skill does. Batch the questions
-into one round, and lead with what you already have. If a fact can't be found, agree a smaller
+Then ask only about gaps whose answer would change what the skill does, in one round, leading
+with what you already have. If a fact can't be found, agree a smaller
 scope with the user and write that limit into the skill. Don't guess.
 
 ## 4. Write the test cases first
@@ -117,7 +117,8 @@ The skill is proven when:
 
 - each should-fire case fires the skill in at least two of three runs,
 - every case meets its graders (a score of at least 0.8),
-- and the skill beats no skill on average.
+- the skill beats no skill on average,
+- and, if test runs can't execute it, a real smoke run passes.
 
 When a case fails, read its transcript before changing anything. A miss on firing is fixed in
 the description; a wrong outcome is fixed in the body. Fix the general cause rather than
@@ -132,7 +133,7 @@ when the user waives it and you record the waiver. Then present:
 - the skill's files and where to put them: the user's skills folder for cross-project
   workflows, the project's skills folder for one repo, or a plugin to share;
 - the test results: fire rate, scores with and without the skill, and the remaining failures;
-- one phrase to try in a new session, since a skill loads only when a session starts.
+- one phrase to try in a new session (skills load when a session starts).
 
 A request to create or edit a skill already authorises writing its files. Ask again only to
 overwrite something the user didn't point you at.
