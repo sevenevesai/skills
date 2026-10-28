@@ -12,7 +12,7 @@ better than no skill at all.
 
 | Skill | What it does | Claude Code |
 |---|---|---|
-| [codex-image](skills/codex-image) | Generates or edits raster images through OpenAI Codex's built-in image generation, on your ChatGPT login. | `/plugin install codex-image --marketplace sevenevesai/skills` |
+| [codex-image](skills/codex-image) | Generates or edits raster images with OpenAI Codex on your ChatGPT login, runs batches in parallel, and cuts sprite and icon sheets into transparent files. | `/plugin install codex-image --marketplace sevenevesai/skills` |
 | [make-skill](skills/make-skill) | Creates, improves or extracts a skill, and proves it works with test cases run with and without it. | `/plugin install make-skill --marketplace sevenevesai/skills` |
 
 ## Install
