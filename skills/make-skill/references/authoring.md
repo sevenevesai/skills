@@ -134,8 +134,10 @@ A skill loads in three stages. Design for each:
 
 - **No surprises.** Nothing the skill does should surprise someone who read only its
   description. Name side effects in the description: network calls, writes outside the
-  project, sending, publishing, deleting. Or ask for confirmation in the body before doing
-  them.
+  project, sending, publishing, deleting. Naming one is not permission for it: before an
+  irreversible step, the body has the session show what will happen and wait for the user's
+  yes, even when the request that fired the skill sounded like one. Where the agent supports
+  it, turning off automatic invocation instead is the other safe option.
 - **Pre-approve as little as possible.** A shell pre-approved in `allowed-tools` means any
   injected text can run commands.
 - **Don't fetch instructions at run time.** A skill that downloads its own instructions can be

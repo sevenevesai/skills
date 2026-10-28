@@ -105,8 +105,8 @@ Follow `references/authoring.md`. In short:
 5. **Scripts**: when every run would write the same helper, bundle it in `scripts/` and say
    how to run it. A script should handle its own errors and say what it needs.
 6. **Side effects**: anything that pushes, publishes, deploys, sends or deletes is named in the
-   description, and the body has the session ask the user before doing it. A skill can fire on
-   its own, so nothing irreversible may hang on the trigger alone.
+   description, and the body has the session ask the user right before doing it. The firing
+   request is not consent; skills fire on requests nobody pictured.
 7. **Grounding**: every path, command, flag and format must come from evidence or from the
    user. An invented command looks plausible until someone relies on it.
 
