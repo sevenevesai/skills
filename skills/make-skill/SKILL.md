@@ -94,7 +94,7 @@ Follow `references/authoring.md`. In short:
 2. **Description**: say what the skill does, then when to use it with quoted phrasings a user
    would type, then the near-misses it is not for. Put the main use case first, because agents
    shorten descriptions when they list many skills. Write it in the third person, under 1024
-   characters, with no tool names.
+   characters, with no agent tool names (the product the skill drives is fine).
 3. **Body**: write in the imperative and give the reason wherever the rule isn't obvious.
    Include only what the model would otherwise get wrong. Give exact commands for fragile
    steps, and leave judgement free where several approaches work. Show a template for any
@@ -108,7 +108,7 @@ Follow `references/authoring.md`. In short:
    description, and the body has the session ask the user before doing it. A skill can fire on
    its own, so nothing irreversible may hang on the trigger alone.
 7. **Grounding**: every path, command, flag and format must come from evidence or from the
-   user. An invented command still looks plausible months later, when someone relies on it.
+   user. An invented command looks plausible until someone relies on it.
 
 ## 6. Prove it
 

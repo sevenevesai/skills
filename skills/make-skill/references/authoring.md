@@ -52,8 +52,9 @@ Keep it to the point:
   applies, in terms of the work itself ("whenever a migration file is about to be written,
   even a small one"), as well as the words users type. Bound the claim with near-misses
   rather than "use whenever in doubt".
-- **No tool names or harness steering.** Tool names differ between agents, and steering belongs
-  in the body.
+- **No agent tool names or harness steering.** Names like `Bash` or `WebFetch` differ between
+  agents, and steering belongs in the body. Naming the product the skill drives (a CLI, an
+  API, a service) is fine and often the best trigger word.
 
 Good: `Fixes a GitHub issue by number, following the repo's test and commit conventions. Use when the user says "fix issue #123", "pick up this ticket", or pastes an issue link. Not for opening new issues.`
 Bad: `GitHub helper.` It has no verbs and no triggers, so nothing routes to it.
