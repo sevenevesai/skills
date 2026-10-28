@@ -41,8 +41,9 @@ A watercolour lighthouse on a cliff at dusk, landscape 3:2, no text.
 EOF
 ```
 
-From PowerShell, pipe it in: `Get-Content prompt.txt | python <skill folder>/scripts/codex_image.py --out assets/hero.png -`.
-`--out` must end in `.png`, and an existing file is kept unless you pass `--force`. Add
+From PowerShell or any other shell, write the prompt to a UTF-8 file and pass
+`--prompt-file prompt.txt` instead of `-`. Don't pipe it in from Windows PowerShell 5.1, which
+mangles accented letters and other non-ASCII text on the way. `--out` must end in `.png`, and an existing file is kept unless you pass `--force`. Add
 `--ref <image>` (repeatable) to attach images, and say in the prompt whether to edit them or
 match their style. For an edit, list what must stay unchanged.
 

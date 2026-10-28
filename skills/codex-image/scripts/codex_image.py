@@ -31,10 +31,20 @@ def main():
                     help="image to edit or use as a reference (repeatable)")
     ap.add_argument("--force", action="store_true", help="overwrite --out if it exists")
     ap.add_argument("--timeout", type=int, default=900, help="seconds (default 900)")
-    ap.add_argument("prompt", help="the image request, or - to read it from stdin")
+    ap.add_argument("--prompt-file", type=Path,
+                    help="read the request from this UTF-8 file instead of the argument")
+    ap.add_argument("prompt", nargs="?", help="the image request, or - to read it from stdin")
     args = ap.parse_args()
 
-    if args.prompt == "-":
+    if (args.prompt is None) == (args.prompt_file is None):
+        sys.exit("error: give the request as an argument, as - for stdin, or with --prompt-file")
+    if args.prompt_file:
+        # utf-8-sig: Windows editors and PowerShell often start the file with a BOM.
+        try:
+            prompt = args.prompt_file.read_text(encoding="utf-8-sig")
+        except OSError as exc:
+            sys.exit(f"error: cannot read --prompt-file: {exc}")
+    elif args.prompt == "-":
         sys.stdin.reconfigure(encoding="utf-8")
         prompt = sys.stdin.read()
     else:
