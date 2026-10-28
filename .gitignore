@@ -1,0 +1,3 @@
+# Bytecode from running a skill's scripts locally; installers must never receive it.
+__pycache__/
+*.pyc
