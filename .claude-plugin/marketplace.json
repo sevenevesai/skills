@@ -8,7 +8,7 @@
   "plugins": [
     {
       "name": "codex-image",
-      "description": "Generates or edits raster images (illustrations, concept art, UI mockups, sprites, icons, textures, photos, cutouts) with OpenAI Codex's built-in image generation, using the ChatGPT login Codex is signed into, and saves the PNG where the project needs it. Use when the user asks to create, draw, render, paint or edit an image, or a task needs a bitmap asset such as a hero image, a game sprite or a texture. Sends the prompt and any reference images to OpenAI. Not for 3D models, or for vector and diagram assets (logos, UI icons, charts) better built as SVG, CSS or code.",
+      "description": "Generates or edits raster images (illustrations, concept art, UI mockups, sprites, icons, textures, photos, cutouts) with OpenAI Codex's built-in image generation, using the ChatGPT login Codex is signed into. Saves PNGs where the project needs them, runs batches in parallel, and cuts the sprite or icon sheets it generates into separate transparent files. Use when the user asks to create, draw, render, paint or edit an image, or a task needs bitmap assets such as a hero image, game sprites, item icons or textures. Sends the prompts and any reference images to OpenAI. Not for 3D models, or for vector and diagram assets (logos, UI icons, charts) better built as SVG, CSS or code.",
       "source": "./skills/codex-image",
       "skills": [
         "."

@@ -1,66 +1,94 @@
 ---
 name: codex-image
-description: Generates or edits raster images (illustrations, concept art, UI mockups, sprites, icons, textures, photos, cutouts) with OpenAI Codex's built-in image generation, using the ChatGPT login Codex is signed into, and saves the PNG where the project needs it. Use when the user asks to create, draw, render, paint or edit an image, or a task needs a bitmap asset such as a hero image, a game sprite or a texture. Sends the prompt and any reference images to OpenAI. Not for 3D models, or for vector and diagram assets (logos, UI icons, charts) better built as SVG, CSS or code.
+description: Generates or edits raster images (illustrations, concept art, UI mockups, sprites, icons, textures, photos, cutouts) with OpenAI Codex's built-in image generation, using the ChatGPT login Codex is signed into. Saves PNGs where the project needs them, runs batches in parallel, and cuts the sprite or icon sheets it generates into separate transparent files. Use when the user asks to create, draw, render, paint or edit an image, or a task needs bitmap assets such as a hero image, game sprites, item icons or textures. Sends the prompts and any reference images to OpenAI. Not for 3D models, or for vector and diagram assets (logos, UI icons, charts) better built as SVG, CSS or code.
 license: MIT
-compatibility: Needs the OpenAI Codex CLI on PATH (tested with codex-cli 0.164.0), signed in with a ChatGPT plan that includes image generation, Python 3.8 or later, and a shell to run the bundled script.
+compatibility: Needs the OpenAI Codex CLI on PATH (tested with codex-cli 0.164.0), signed in with a ChatGPT plan that includes image generation, Python 3.8 or later, and a shell to run the bundled scripts. slice_sheet.py also needs numpy and Pillow (scipy for overlapping subjects).
 ---
 
 # Codex image generation
 
 An agent that writes code can't draw, but Codex can: its built-in image tool runs on the
-ChatGPT login Codex already has, so no API key is needed. `scripts/codex_image.py` (relative to
-this skill's folder) runs `codex exec` in a read-only sandbox, has Codex call its image tool
-exactly once, and copies the PNG to `--out`. One image took about 30-40 seconds in testing.
+ChatGPT login Codex already has, so no API key is needed. Three scripts in this skill's
+`scripts/` folder cover the work around it. Run them; there is no need to read them.
+
+| Script | Use it for |
+|---|---|
+| `codex_image.py` | One image: runs `codex exec` read-only, has Codex make exactly one image, copies the PNG to `--out`. About 30-40 seconds. |
+| `codex_batch.py` | Many images in parallel from a JSON list of jobs, with a shared style block, skip-if-exists, and a saved prompt beside each image. |
+| `slice_sheet.py` | Cutting a generated sheet into one transparent PNG per subject, or one subject out of its background. |
 
 ## 1. Write a self-contained prompt
 
 Codex sees only the prompt: not the conversation, not the project's files. Include:
 
-- the subject, the style or medium, the composition, and the aspect ratio or size ("landscape
-  3:2, about 1536x1024");
+- the subject, the style or medium, the composition, and the aspect ratio (square, landscape
+  3:2, portrait 2:3);
 - any text to render, exactly, in quotes;
-- "transparent background" when the asset needs alpha;
 - what to avoid: watermarks, captions, device frames, perspective mockups.
 
-For a matching set, repeat the shared style block word for word in every prompt.
+For a cutout (a sprite, an icon, an object), ask for a solid flat key colour that the subject
+doesn't use, such as magenta `#FF00FF`, rather than a transparent background. A requested
+transparent background often comes back opaque. `slice_sheet.py` removes either.
 
-## 2. Run the script
+## 2. Generate
 
-From a POSIX shell (macOS, Linux, Git Bash), pass the prompt on stdin with a quoted heredoc so
-quotes inside it survive:
+**One image.** From a POSIX shell (macOS, Linux, Git Bash), pass the prompt on stdin with a
+quoted heredoc so quotes inside it survive:
 
 ```bash
 python "<skill folder>/scripts/codex_image.py" --out "assets/hero.png" - <<'EOF'
-A watercolour lighthouse on a cliff at dusk, landscape 3:2, about 1536x1024, no text.
+A watercolour lighthouse on a cliff at dusk, landscape 3:2, no text.
 EOF
 ```
 
-From PowerShell, pipe the prompt in: `Get-Content prompt.txt | python <skill folder>/scripts/codex_image.py --out assets/hero.png -`.
-A short prompt can also be the last argument instead of `-`.
+From PowerShell, pipe it in: `Get-Content prompt.txt | python <skill folder>/scripts/codex_image.py --out assets/hero.png -`.
+`--out` must end in `.png`, and an existing file is kept unless you pass `--force`. Add
+`--ref <image>` (repeatable) to attach images, and say in the prompt whether to edit them or
+match their style. For an edit, list what must stay unchanged.
 
-- `--out` must end in `.png`. Missing parent folders are created. The script refuses to
-  overwrite an existing file unless you pass `--force`.
-- Save project assets where the project keeps them, and previews in a temporary folder.
-- `--ref <image>` (repeatable) attaches images. Say in the prompt whether to edit them ("Edit
-  the attached image: ...") or use them as references ("Match the style of the attached
-  image"). For an edit, list what must stay unchanged.
-- One call makes one image. For variants or a set, make separate calls. Each call runs in its
-  own Codex thread with its own output folder, so parallel calls are safe.
-- Codex runs on the user's ChatGPT plan, so each call uses their quota. Ask before making a
-  large batch.
+**A set or many images.** Write the jobs to a JSON file in the project, next to where the
+images go (never inside this skill's folder), and run them, four at a time by default:
+
+```json
+{"style": "Flat game-icon style, bold shapes, soft shading, solid magenta (#FF00FF) background, no text.",
+ "jobs": [{"out": "assets/icons/sword.png", "prompt": "An iron sword."},
+          {"out": "assets/icons/shield.png", "prompt": "A round wooden shield.", "refs": ["ref/style.png"]}]}
+```
+
+`python "<skill folder>/scripts/codex_batch.py" jobs.json` prints ok, skip or FAIL per job and
+exits 1 if any failed. Run it again to retry only the failures. The `style` text goes in
+front of every prompt word for word, which is what keeps a set matching.
+
+**Small matching items** (icons, items, sprites) can share one sheet instead: up to 9
+subjects in a grid ("a 3x3 grid of nine separate icons with wide empty gaps between them,
+on solid magenta"), then cut it:
+
+```bash
+python "<skill folder>/scripts/slice_sheet.py" sheet.png assets/icons --rows 3 --cols 3 --names a,b,c,d,e,f,g,h,i --size 256
+```
+
+Codex ignores requested padding and cell sizes, so the script cuts at the empty gutters it
+finds. It exits 1 and names the problem when subjects touch or a cell is empty; regenerate
+the sheet then. A rerun is usually cheaper than repairing a bad image. Each call uses the
+user's ChatGPT quota, so ask before a large batch.
 
 ## 3. Check the result
 
-Success is exit code 0 with the saved path on stdout. Then open the PNG and look at it: check
-it against the request (subject, text, size, alpha where asked) before using it or calling the
-task done.
+Success is exit 0 with the saved path printed. Then open the image and look at it. Check it
+against the request (subject, text, aspect, background) before using it or calling the task
+done.
 
-- An edit redraws the whole image. Regions it was told to keep come back with slight colour
-  drift (3-7 levels of 255 in testing). When exact pixels matter, paste the originals back
-  afterwards.
-- Positions written in the prompt (pixel rows, percentages) are loose; one came back 76 pixels
-  off. To pin a layout, put real pixels at those positions on the canvas you send for editing.
-- Output is PNG only. Convert it afterwards if the project needs another format.
+- **Size**: the pixel size isn't under prompt control. Square came back as 1024x1024 or
+  1254x1254, and 3:2 as 1536x1024. Resize afterwards when the project needs an exact size.
+- **Scale and position** are loose: one requested position came back 76 pixels off, and a
+  requested 4x scale came back 4.5x. Measure the result instead of trusting the prompt. To
+  pin a layout, send a canvas with real pixels in place as a `--ref` to edit.
+- **Edits** redraw the whole image. Regions it was told to keep come back with slight colour
+  drift (3-7 levels of 255). When exact pixels matter, paste the originals back.
+- **Pixel art** comes back as a large image of painted pixels, not true low-resolution art.
+  Downscale it with nearest-neighbour resampling to the pixel size you measure.
+- **Key-colour edges** keep a faint tint of the key colour after cutting. Choose a key close
+  to the final background when that shows.
 
 ## When it fails
 
