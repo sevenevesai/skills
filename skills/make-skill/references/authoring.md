@@ -15,7 +15,7 @@ A skill is a folder holding `SKILL.md`: YAML frontmatter, then Markdown. Optiona
 | Field | Rule |
 |---|---|
 | `name` | Required. 1-64 characters: lowercase letters, digits and single hyphens, no hyphen at either end. Must equal the folder name. Claude's platform rejects names containing `claude` or `anthropic`. |
-| `description` | Required. 1-1024 characters. See below. |
+| `description` | Required. 1-1024 characters, with no `<` or `>`: Anthropic's skill validator rejects them and Claude Code lists them as `&lt;` and `&gt;`. See below. |
 | `license` | A license name, or the name of a license file in the folder. Set it for anything shared. |
 | `compatibility` | Up to 500 characters: required tools and versions, services, network, operating system. |
 | `metadata` | A map of string keys to string values, for things like `author` or `version`. Quote numbers so they stay strings. |
@@ -67,6 +67,14 @@ Bad: `GitHub helper.` It has no verbs and no triggers, so nothing routes to it.
   neglect the rest; use plain sentences.
 - **Only what the model lacks.** Assume a capable reader. Cut general advice it already
   follows; keep the gotchas, exact formats and decisions it would get wrong.
+- **Gotchas name the failure.** List the non-obvious mistakes in one place, each with what
+  goes wrong, how it shows and what to do instead. "Handle errors carefully" teaches nothing;
+  "the export exits 0 on a locked file and writes an empty CSV, so check the row count" does.
+- **One default, not a menu.** Name the tool or approach to use. Mention an alternative only
+  with the condition that calls for it, or every run spends effort choosing.
+- **Requirements first.** Put what every run must do, and the gates, ahead of depth. After
+  compacting a long session an agent may keep only the start of a loaded skill (Claude Code
+  keeps the first 5,000 tokens).
 - **Match freedom to fragility.** Give exact commands and sequences where a deviation breaks
   something (migrations, releases). Give a parameterised template where a shape matters.
   Leave free judgement where many approaches work.
@@ -75,10 +83,13 @@ Bad: `GitHub helper.` It has no verbs and no triggers, so nothing routes to it.
 - **Examples as input and output.** One concrete pair is worth paragraphs of description.
 - **Checklists and feedback loops** for multi-step work: do, check, fix, check again. A check
   with a clear signal, such as an exit code, a validator or a diff, is worth more than an
-  instruction to "be careful".
+  instruction to "be careful". For output a person will look at (a slide, a page, an image),
+  the check is to render it and look, because code that reads as correct can still produce
+  overlapping or clipped output.
 - **Consistent terms.** Pick one word per concept and keep it throughout.
 - **Nothing that goes stale silently.** Avoid "currently" and "the new API". When a fact
-  depends on a version, name the version.
+  depends on a version, name the version. When a list will age (models, prices, limits), date
+  it, so a later run can tell when to check again.
 
 ## Structure and size
 
@@ -101,7 +112,8 @@ A skill loads in three stages. Design for each:
   to the reference. Runs often skip references, so a requirement written only there gets
   skipped too. That is not duplication: SKILL.md says what must happen, the reference says how.
 - Link every bundled file from SKILL.md with a relative path, and say when to read it. A file
-  nothing points to is never read.
+  nothing points to is never read. Spell the name exactly as it is on disk, including letter
+  case: `FORMS.md` for a file named `forms.md` resolves on Windows and macOS and not on Linux.
 - Keep links one level deep: SKILL.md links to references, and references don't send the
   reader on to more files.
 - Give a reference file over 100 lines a contents line at the top.
@@ -115,10 +127,23 @@ A skill loads in three stages. Design for each:
   conversion, API calls with fixed shapes.
 - Say how to run it and what success looks like. Tell the model to run the script rather
   than read it, unless it needs to change it.
-- A script handles its own errors and prints what went wrong. It doesn't fail silently and
-  leave the model to guess.
+- A script handles its own errors and prints what went wrong and what to do next. It doesn't
+  fail silently and leave the model to guess.
 - Name the packages and versions it needs, and put them in `compatibility`.
 - No unexplained constants. A timeout or limit carries a comment saying why it has that value.
+
+An agent runs the script, not a person at a terminal, so its interface follows from that:
+
+- It never waits for typed input. Agents run commands non-interactively, and a prompt hangs
+  the run. Everything arrives as flags, arguments or standard input.
+- `--help` describes the flags, so the model can learn the interface without reading the
+  source.
+- The result goes to standard output in a form that can be parsed, diagnostics go to standard
+  error, and the exit code is non-zero whenever the work failed or a check found problems.
+- Output stays bounded. Agents cut long command output (often somewhere past 10,000
+  characters), so print a summary and write the bulk to a file whose path is printed.
+- Anything destructive or run over many items offers a dry run that prints the plan, so the
+  session can check it before the real run.
 
 ## Portability across agents
 
@@ -141,7 +166,9 @@ A skill loads in three stages. Design for each:
 - **Pre-approve as little as possible.** A shell pre-approved in `allowed-tools` means any
   injected text can run commands.
 - **Don't fetch instructions at run time.** A skill that downloads its own instructions can be
-  changed after anyone has reviewed it.
+  changed after anyone has reviewed it. Data fetched at run time (a catalogue, a price list)
+  is fine when the body treats it as data: say which fields to take, to ignore any
+  instructions found in it, and what to do when the fetch fails.
 - **Read every script before shipping it.** An installed skill runs with the agent's
   permissions.
 

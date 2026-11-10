@@ -95,6 +95,9 @@ arm: both
 contain. If a check passes just as often without the skill, it measures the model, not the
 skill. Keep it only as a floor, and add one that tells the two runs apart.
 
+A check asks for substance. A file that exists but is empty, or a heading with nothing under
+it, should fail, so word the condition so that the surface alone can't pass it.
+
 - For long or mechanical output, use `regex` over the file, which checks the whole file the
   same way every time.
 - For short output that needs judgement, use `llm` with concrete conditions:
@@ -158,9 +161,20 @@ A skill is proven when, over three runs per case:
 Record the date, the model, the scores and the fire rates with the skill. Run again whenever
 the skill or the cases change, and when a new model comes out.
 
+Two things the bar can't settle, to report beside it:
+
+- **Cost.** Note the time and tokens (or spend) of runs with the skill against runs without. A
+  small gain in score for twice the cost may not be worth shipping.
+- **Taste.** Where quality is a matter of judgement (design, prose, naming), checks can't
+  carry the proof alone. Show the user outputs from both runs side by side, unlabelled where
+  you can, and record what they said.
+
 ## Iterating
 
-1. Read the transcripts of failing runs, not just the scores.
+1. Read the transcripts of failing runs, not just the scores. Compare each check across the
+   two runs as well as the totals: one that passes more often without the skill marks an
+   instruction that misleads, and one that flips between runs of the same case marks an
+   ambiguous one.
 2. Failed to fire: rework the description (see the next section). Fired but got it wrong:
    rework the body.
 3. Fix the cause in general terms. The skill will meet prompts nobody tested, so a patch
@@ -182,3 +196,5 @@ When firing is unreliable, test the description on its own:
   queries you revised against.
 - Don't paste words from failed queries into the description. Describe the intent those
   queries share.
+- Stop after about five rounds; later ones tend to fit the queries rather than the intent.
+  Then try five to ten fresh queries that took no part in the tuning.

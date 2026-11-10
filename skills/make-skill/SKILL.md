@@ -103,7 +103,7 @@ Follow `references/authoring.md`. In short:
    `references/` one level deep, and point to each file with when to read it. A file nothing
    points to is never read. Keep each fact in one place.
 5. **Scripts**: when every run would write the same helper, bundle it in `scripts/` and say
-   how to run it. A script should handle its own errors and say what it needs.
+   how to run it. A script handles its own errors and never prompts for input.
 6. **Side effects**: anything that pushes, publishes, deploys, sends or deletes is named in the
    description, and the body has the session ask the user right before doing it. The firing
    request is not consent; skills fire on requests nobody pictured.
